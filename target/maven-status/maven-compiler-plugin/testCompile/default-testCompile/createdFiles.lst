@@ -1,0 +1,6 @@
+com\softnix\moviebooking\concurrency\ConcurrentBookingIntegrationTest.class
+com\softnix\moviebooking\concurrency\ConcurrentCancellationIntegrationTest.class
+com\softnix\moviebooking\service\ShowServiceTest.class
+com\softnix\moviebooking\controller\ShowControllerTest.class
+com\softnix\moviebooking\service\BookingServiceTest.class
+com\softnix\moviebooking\controller\BookingControllerTest.class

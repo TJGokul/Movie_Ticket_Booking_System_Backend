@@ -1,0 +1,444 @@
+{
+  "info": {
+    "_postman_id": "8e3c91a0-3b4f-4d92-91ef-moviebookingsystem",
+    "name": "Movie Ticket Booking System API",
+    "description": "Production-ready Postman collection for Movie Ticket Booking System with concurrency safety, pre-show cancellation, full refund, and real-time seat availability.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "showId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "seatId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "bookingId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "customerId",
+      "value": "CUST-1001",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Shows",
+      "item": [
+        {
+          "name": "Create Show",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.showId) {",
+                  "    pm.collectionVariables.set(\"showId\", jsonData.showId);",
+                  "}",
+                  "if (jsonData.seats && jsonData.seats.length > 0) {",
+                  "    pm.collectionVariables.set(\"seatId\", jsonData.seats[0].seatId);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"movieName\": \"Avatar: The Way of Water\",\n  \"showTime\": \"2026-10-31T18:30:00Z\",\n  \"totalSeats\": 20,\n  \"pricePerSeat\": 250.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/shows",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "shows"]
+            }
+          }
+        },
+        {
+          "name": "Get Show By ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/shows/{{showId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "shows", "{{showId}}"]
+            }
+          }
+        },
+        {
+          "name": "List All Shows",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/shows",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "shows"]
+            }
+          }
+        },
+        {
+          "name": "Get Available Seats (isBooked == false)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.length > 0) {",
+                  "    pm.collectionVariables.set(\"seatId\", jsonData[0].seatId);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/shows/{{showId}}/available-seats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "shows", "{{showId}}", "available-seats"]
+            }
+          }
+        },
+        {
+          "name": "Get All Seats For Show",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/shows/{{showId}}/seats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "shows", "{{showId}}", "seats"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Bookings",
+      "item": [
+        {
+          "name": "Book Seat",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.bookingId) {",
+                  "    pm.collectionVariables.set(\"bookingId\", jsonData.bookingId);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"showId\": {{showId}},\n  \"seatId\": {{seatId}},\n  \"customerId\": \"{{customerId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "bookings"]
+            }
+          }
+        },
+        {
+          "name": "Get Booking Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/bookings/{{bookingId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "bookings", "{{bookingId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Customer Bookings",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/bookings?customerId={{customerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "bookings"],
+              "query": [
+                {
+                  "key": "customerId",
+                  "value": "{{customerId}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cancel Booking (Full Refund)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Status is CANCELLED\", function () {",
+                  "    pm.expect(jsonData.status).to.eql(\"CANCELLED\");",
+                  "});",
+                  "pm.test(\"Refund amount is present\", function () {",
+                  "    pm.expect(jsonData.refundAmount).to.be.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/bookings/{{bookingId}}/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "bookings", "{{bookingId}}", "cancel"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Negative & Edge Case Tests",
+      "item": [
+        {
+          "name": "Conflict - Double Booking Same Seat",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 409 Conflict\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Error is SEAT_ALREADY_BOOKED\", function () {",
+                  "    pm.expect(jsonData.error).to.eql(\"SEAT_ALREADY_BOOKED\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"showId\": {{showId}},\n  \"seatId\": {{seatId}},\n  \"customerId\": \"CUST-ANOTHER\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "bookings"]
+            }
+          }
+        },
+        {
+          "name": "Conflict - Cancel Already Cancelled Booking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 409 Conflict\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Error is BOOKING_ALREADY_CANCELLED\", function () {",
+                  "    pm.expect(jsonData.error).to.eql(\"BOOKING_ALREADY_CANCELLED\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/bookings/{{bookingId}}/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "bookings", "{{bookingId}}", "cancel"]
+            }
+          }
+        },
+        {
+          "name": "Not Found - Nonexistent Show",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404 Not Found\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/shows/99999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "shows", "99999"]
+            }
+          }
+        },
+        {
+          "name": "Bad Request - Bean Validation Failure",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Error is VALIDATION_FAILED\", function () {",
+                  "    pm.expect(jsonData.error).to.eql(\"VALIDATION_FAILED\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"movieName\": \"\",\n  \"showTime\": null,\n  \"totalSeats\": 0,\n  \"pricePerSeat\": -5.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/shows",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "shows"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
